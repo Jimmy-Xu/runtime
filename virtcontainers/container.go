@@ -861,9 +861,43 @@ func (c *Container) create() (err error) {
 		}
 	}
 
-	// Attach devices
-	if err = c.attachDevices(); err != nil {
-		return
+	var (
+		machineType        = c.sandbox.config.HypervisorConfig.HypervisorMachineType
+		enableLazyAttach   = c.sandbox.config.HypervisorConfig.EnableLazyAttachDevice
+		normalAttachedDevs []ContainerDevice //for q35: normally attached devices
+		delayAttachedDevs  []ContainerDevice //for q35: delay attached devices, for example vfio display devices
+	)
+	// There is a confliction between rescanPciBus in kata-agent and pciehp in Linux for q35
+	// Since the delay time of pciehp is 5 seconds, rescanPciBus will run first, causing pciehp to fail to initialize the PCIe device properly.
+	// This issue caused linux to fail to load the nvidia driver module.
+	// Attach the Nvidia VFIO device after agent createContainer will solve the problem.
+	if machineType == QemuQ35 && enableLazyAttach {
+		for _, device := range c.devices {
+			// add vfio display device to delayAttachedDevs
+			var isVfioDispDev bool
+			isVfioDispDev, err = manager.IsVFIODisplay(device.ContainerPath)
+			if err != nil {
+				return
+			}
+			if isVfioDispDev {
+				delayAttachedDevs = append(delayAttachedDevs, device)
+			} else {
+				normalAttachedDevs = append(normalAttachedDevs, device)
+			}
+		}
+	} else {
+		normalAttachedDevs = c.devices
+	}
+
+	c.Logger().WithFields(logrus.Fields{
+		"machine_type":              machineType,
+		"devices":                   normalAttachedDevs,
+		"enable_lazy_attach_device": enableLazyAttach,
+	}).Info("normal attach devices")
+	if len(normalAttachedDevs) > 0 {
+		if err = c.attachDevices(normalAttachedDevs); err != nil {
+			return
+		}
 	}
 
 	// Deduce additional system mount info that should be handled by the agent
@@ -875,6 +909,18 @@ func (c *Container) create() (err error) {
 		return err
 	}
 	c.process = *process
+
+	// lazy attach device after createContainer for q35
+	if machineType == QemuQ35 && len(delayAttachedDevs) > 0 {
+		c.Logger().WithFields(logrus.Fields{
+			"machine_type":              machineType,
+			"devices":                   delayAttachedDevs,
+			"enable_lazy_attach_device": enableLazyAttach,
+		}).Info("lazy attach devices")
+		if err = c.attachDevices(delayAttachedDevs); err != nil {
+			return
+		}
+	}
 
 	if !rootless.IsRootless() && !c.sandbox.config.SandboxCgroupOnly {
 		if err = c.cgroupsCreate(); err != nil {
@@ -1359,11 +1405,11 @@ func (c *Container) removeDrive() (err error) {
 	return nil
 }
 
-func (c *Container) attachDevices() error {
+func (c *Container) attachDevices(devices []ContainerDevice) error {
 	// there's no need to do rollback when error happens,
 	// because if attachDevices fails, container creation will fail too,
 	// and rollbackFailingContainerCreation could do all the rollbacks
-	for _, dev := range c.devices {
+	for _, dev := range devices {
 		if err := c.sandbox.devManager.AttachDevice(dev.ID, c.sandbox); err != nil {
 			return err
 		}

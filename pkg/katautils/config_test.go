@@ -865,7 +865,7 @@ func TestNewQemuHypervisorConfig(t *testing.T) {
 	}
 
 	if config.EnableLazyAttachDevice != enableLazyAttachDevice {
-		t.Errorf("Expected value for EnableLazyAttachDevice %v, got $v", enableLazyAttachDevice, config.EnableLazyAttachDevice)
+		t.Errorf("Expected value for EnableLazyAttachDevice %v, got %v", enableLazyAttachDevice, config.EnableLazyAttachDevice)
 	}
 }
 

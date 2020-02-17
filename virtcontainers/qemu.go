@@ -68,9 +68,9 @@ type QemuState struct {
 	HotpluggedVCPUs      []CPUDevice
 	HotpluggedMemory     int
 	UUID                 string
-	HotplugVFIOOnRootBus bool
 	VirtiofsdPid         int
 	PCIeRootPort         int
+	HotplugVFIOOnRootBus bool
 
 	EnableLazyAttachDevice bool
 }
