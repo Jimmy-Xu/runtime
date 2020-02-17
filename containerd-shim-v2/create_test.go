@@ -399,6 +399,7 @@ func createAllRuntimeConfigFiles(dir, hypervisor string) (config string, err err
 	enableIOThreads := true
 	hotplugVFIOOnRootBus := true
 	pcieRootPort := uint32(2)
+	enableLazyAttachDevice := true
 	disableNewNetNs := false
 	sharedFS := "virtio-9p"
 
@@ -420,6 +421,8 @@ func createAllRuntimeConfigFiles(dir, hypervisor string) (config string, err err
 		PCIeRootPort:         pcieRootPort,
 		DisableNewNetNs:      disableNewNetNs,
 		SharedFS:             sharedFS,
+
+		EnableLazyAttachDevice: enableLazyAttachDevice,
 	}
 
 	runtimeConfigFileData := ktu.MakeRuntimeConfigFileData(configFileOptions)

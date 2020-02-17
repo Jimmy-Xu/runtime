@@ -101,6 +101,9 @@ const (
 	// The PCIe Root Port device is used to hot-plug the PCIe device
 	PCIeRootPort = kataAnnotHypervisorPrefix + "pcie_root_port"
 
+	// EnableLazyAttachDevice is used to enable/disable to attach device after create container.
+	EnableLazyAttachDevice = kataAnnotHypervisorPrefix + "enable_lazy_attach_device"
+
 	// EntropySource is a sandbox annotation to specify the path to a host source of
 	// entropy (/dev/random, /dev/urandom or real hardware RNG device)
 	EntropySource = kataAnnotHypervisorPrefix + "entropy_source"

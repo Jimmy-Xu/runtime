@@ -92,6 +92,7 @@ func makeRuntimeConfig(prefixDir string) (configFile string, config oci.RuntimeC
 	enableIOThreads := true
 	hotplugVFIOOnRootBus := true
 	pcieRootPort := uint32(2)
+	enableLazyAttachDevice := true
 	disableNewNetNs := false
 	sharedFS := "virtio-9p"
 
@@ -166,6 +167,8 @@ func makeRuntimeConfig(prefixDir string) (configFile string, config oci.RuntimeC
 		AgentDebug:           agentDebug,
 		AgentTrace:           agentTrace,
 		SharedFS:             sharedFS,
+
+		EnableLazyAttachDevice: enableLazyAttachDevice,
 	}
 
 	runtimeConfig := katatestutils.MakeRuntimeConfigFileData(configFileOptions)
@@ -334,6 +337,8 @@ func getExpectedHypervisor(config oci.RuntimeConfig) HypervisorInfo {
 
 		HotplugVFIOOnRootBus: config.HypervisorConfig.HotplugVFIOOnRootBus,
 		PCIeRootPort:         config.HypervisorConfig.PCIeRootPort,
+
+		EnableLazyAttachDevice: config.HypervisorConfig.EnableLazyAttachDevice,
 	}
 }
 

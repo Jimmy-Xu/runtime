@@ -41,6 +41,8 @@ type RuntimeConfigOptions struct {
 	NetmonDebug          bool
 	AgentDebug           bool
 	AgentTrace           bool
+
+	EnableLazyAttachDevice bool
 }
 
 func MakeRuntimeConfigFileData(config RuntimeConfigOptions) string {
@@ -61,6 +63,7 @@ func MakeRuntimeConfigFileData(config RuntimeConfigOptions) string {
 	enable_iothreads =  ` + strconv.FormatBool(config.EnableIOThreads) + `
 	hotplug_vfio_on_root_bus =  ` + strconv.FormatBool(config.HotplugVFIOOnRootBus) + `
 	pcie_root_port = ` + strconv.FormatUint(uint64(config.PCIeRootPort), 10) + `
+	enable_lazy_attach_device = ` + strconv.FormatBool(config.EnableLazyAttachDevice) + `
 	msize_9p = ` + strconv.FormatUint(uint64(config.DefaultMsize9p), 10) + `
 	enable_debug = ` + strconv.FormatBool(config.HypervisorDebug) + `
 	guest_hook_path = "` + config.DefaultGuestHookPath + `"

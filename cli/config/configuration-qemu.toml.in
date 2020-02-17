@@ -231,6 +231,17 @@ enable_iothreads = @DEFENABLEIOTHREADS@
 # Default 0
 #pcie_root_port = 2
 
+# For MMIO space over 4G for PCI hotplug.
+# Hot-plugging VFIO devices requires shpchp/pciehp in guest OS,
+# The kata agent in the VM will rescan the PCI bus before waiting for new devices
+# (https://github.com/kata-containers/agent/commit/a6284965adab127ef8b0c597379ed898546c9f99).
+# Usually rescan will initialize the VFIO device before shpchp/pciehhp,
+# which will cause the MMIO BAR space allocation to fail.
+# In order to solve the above problems, some devices should be connected after create container.
+# This value is valid when machine_type is "q35"
+# Default false
+#enable_lazy_attach_device = true
+
 # If vhost-net backend for virtio-net is not desired, set to true. Default is false, which trades off
 # security (vhost-net runs ring0) for network I/O performance. 
 #disable_vhost_net = true

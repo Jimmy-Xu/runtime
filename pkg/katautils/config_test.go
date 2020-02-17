@@ -83,6 +83,7 @@ func createAllRuntimeConfigFiles(dir, hypervisor string) (config testRuntimeConf
 	enableIOThreads := true
 	hotplugVFIOOnRootBus := true
 	pcieRootPort := uint32(2)
+	enableLazyAttachDevice := true
 	disableNewNetNs := false
 	sharedFS := "virtio-9p"
 
@@ -117,6 +118,8 @@ func createAllRuntimeConfigFiles(dir, hypervisor string) (config testRuntimeConf
 		AgentDebug:           agentDebug,
 		AgentTrace:           agentTrace,
 		SharedFS:             sharedFS,
+
+		EnableLazyAttachDevice: enableLazyAttachDevice,
 	}
 
 	runtimeConfigFileData := ktu.MakeRuntimeConfigFileData(configFileOptions)
@@ -168,6 +171,8 @@ func createAllRuntimeConfigFiles(dir, hypervisor string) (config testRuntimeConf
 		SharedFS:              sharedFS,
 		VirtioFSDaemon:        "/path/to/virtiofsd",
 		VirtioFSCache:         defaultVirtioFSCacheMode,
+
+		EnableLazyAttachDevice: enableLazyAttachDevice,
 	}
 
 	agentConfig := vc.KataAgentConfig{}
@@ -779,6 +784,7 @@ func TestNewQemuHypervisorConfig(t *testing.T) {
 	enableIOThreads := true
 	hotplugVFIOOnRootBus := true
 	pcieRootPort := uint32(2)
+	enableLazyAttachDevice := true
 	orgVHostVSockDevicePath := utils.VHostVSockDevicePath
 	defer func() {
 		utils.VHostVSockDevicePath = orgVHostVSockDevicePath
@@ -795,6 +801,8 @@ func TestNewQemuHypervisorConfig(t *testing.T) {
 		HotplugVFIOOnRootBus:  hotplugVFIOOnRootBus,
 		PCIeRootPort:          pcieRootPort,
 		UseVSock:              true,
+
+		EnableLazyAttachDevice: enableLazyAttachDevice,
 	}
 
 	files := []string{hypervisorPath, kernelPath, imagePath}
@@ -855,6 +863,10 @@ func TestNewQemuHypervisorConfig(t *testing.T) {
 	if config.PCIeRootPort != pcieRootPort {
 		t.Errorf("Expected value for PCIeRootPort %v, got %v", pcieRootPort, config.PCIeRootPort)
 	}
+
+	if config.EnableLazyAttachDevice != enableLazyAttachDevice {
+		t.Errorf("Expected value for EnableLazyAttachDevice %v, got $v", enableLazyAttachDevice, config.EnableLazyAttachDevice)
+	}
 }
 
 func TestNewQemuHypervisorConfigImageAndInitrd(t *testing.T) {
@@ -879,6 +891,7 @@ func TestNewQemuHypervisorConfigImageAndInitrd(t *testing.T) {
 	enableIOThreads := true
 	hotplugVFIOOnRootBus := true
 	pcieRootPort := uint32(2)
+	enableLazyAttachDevice := true
 
 	hypervisor := hypervisor{
 		Path:                  hypervisorPath,
@@ -890,6 +903,8 @@ func TestNewQemuHypervisorConfigImageAndInitrd(t *testing.T) {
 		EnableIOThreads:       enableIOThreads,
 		HotplugVFIOOnRootBus:  hotplugVFIOOnRootBus,
 		PCIeRootPort:          pcieRootPort,
+
+		EnableLazyAttachDevice: enableLazyAttachDevice,
 	}
 
 	_, err = newQemuHypervisorConfig(hypervisor)

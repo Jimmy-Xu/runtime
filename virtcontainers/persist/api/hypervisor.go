@@ -42,4 +42,6 @@ type HypervisorState struct {
 	VirtiofsdPid         int
 	HotplugVFIOOnRootBus bool
 	PCIeRootPort         int
+
+	EnableLazyAttachDevice bool
 }

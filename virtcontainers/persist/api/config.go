@@ -157,6 +157,9 @@ type HypervisorConfig struct {
 	// The PCIe Root Port device is used to hot-plug the PCIe device
 	PCIeRootPort uint32
 
+	// EnableLazyAttachDevice is used to enable/disable to attach device after create container.
+	EnableLazyAttachDevice bool
+
 	// BootToBeTemplate used to indicate if the VM is created to be a template VM
 	BootToBeTemplate bool
 

@@ -95,6 +95,8 @@ type HypervisorInfo struct {
 	HotplugVFIOOnRootBus bool
 	Debug                bool
 	UseVSock             bool
+
+	EnableLazyAttachDevice bool
 }
 
 // ProxyInfo stores proxy details
@@ -360,6 +362,8 @@ func getHypervisorInfo(config oci.RuntimeConfig) HypervisorInfo {
 
 		HotplugVFIOOnRootBus: config.HypervisorConfig.HotplugVFIOOnRootBus,
 		PCIeRootPort:         config.HypervisorConfig.PCIeRootPort,
+
+		EnableLazyAttachDevice: config.HypervisorConfig.EnableLazyAttachDevice,
 	}
 }
 

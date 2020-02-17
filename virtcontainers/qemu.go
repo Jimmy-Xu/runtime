@@ -71,6 +71,8 @@ type QemuState struct {
 	HotplugVFIOOnRootBus bool
 	VirtiofsdPid         int
 	PCIeRootPort         int
+
+	EnableLazyAttachDevice bool
 }
 
 // qemu is an Hypervisor interface implementation for the Linux qemu hypervisor.
@@ -269,6 +271,7 @@ func (q *qemu) setup(id string, hypervisorConfig *HypervisorConfig) error {
 
 		q.state.HotplugVFIOOnRootBus = q.config.HotplugVFIOOnRootBus
 		q.state.PCIeRootPort = int(q.config.PCIeRootPort)
+		q.state.EnableLazyAttachDevice = q.config.EnableLazyAttachDevice
 
 		// The path might already exist, but in case of VM templating,
 		// we have to create it since the sandbox has not created it yet.
@@ -2081,6 +2084,7 @@ func (q *qemu) save() (s persistapi.HypervisorState) {
 	s.HotpluggedMemory = q.state.HotpluggedMemory
 	s.HotplugVFIOOnRootBus = q.state.HotplugVFIOOnRootBus
 	s.PCIeRootPort = q.state.PCIeRootPort
+	s.EnableLazyAttachDevice = q.state.EnableLazyAttachDevice
 
 	for _, bridge := range q.arch.getBridges() {
 		s.Bridges = append(s.Bridges, persistapi.Bridge{
@@ -2105,6 +2109,7 @@ func (q *qemu) load(s persistapi.HypervisorState) {
 	q.state.HotplugVFIOOnRootBus = s.HotplugVFIOOnRootBus
 	q.state.VirtiofsdPid = s.VirtiofsdPid
 	q.state.PCIeRootPort = s.PCIeRootPort
+	q.state.EnableLazyAttachDevice = s.EnableLazyAttachDevice
 
 	for _, bridge := range s.Bridges {
 		q.state.Bridges = append(q.state.Bridges, types.NewBridge(types.Type(bridge.Type), bridge.ID, bridge.DeviceAddr, bridge.Addr))

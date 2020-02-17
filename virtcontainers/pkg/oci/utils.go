@@ -455,6 +455,14 @@ func addHypervisorConfigOverrides(ocispec specs.Spec, config *vc.SandboxConfig) 
 		config.HypervisorConfig.PCIeRootPort = uint32(pcieRootPort)
 	}
 
+	if value, ok := ocispec.Annotations[vcAnnotations.EnableLazyAttachDevice]; ok {
+		enableLazyAttachDevice, err := strconv.ParseBool(value)
+		if err != nil {
+			return fmt.Errorf("Error parsing annotation for enable_lazy_attach_device: %v, Please specify boolean value 'true|false'", err)
+		}
+		config.HypervisorConfig.EnableLazyAttachDevice = enableLazyAttachDevice
+	}
+
 	if value, ok := ocispec.Annotations[vcAnnotations.EntropySource]; ok {
 		if value != "" {
 			config.HypervisorConfig.EntropySource = value
